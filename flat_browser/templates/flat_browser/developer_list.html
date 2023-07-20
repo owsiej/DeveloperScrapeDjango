@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="get" action="{% url 'flat_browser:find_flat'%}">
+
+
+    <label for="developers">Lista dostępnych deweloperów</label>
+    <select id="developers" name="dev" multiple required>
+        <option disabled>Wybierz dewelopera</option>
+        {% for developer in developer_list%}
+        <option value="{{developer.id}}">
+            {{developer}}
+        </option>
+        {% endfor %}
+    </select>
+    <button type="submit">WYBIERZ</button>
+</form>
+<form method="get" action="{% url 'flat_browser:find_flat'%}">
+    <button type="submit">
+        kliknij tutaj aby wybrać wszystkich developerów i przejść dalej
+    </button>
+</form>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="get">
+
+    <div>
+        <label for="investments">Lista dostępnych inwestycji wybranych deweloperów</label>
+        <select id="investments" name="invest" multiple>
+            {% for investment in investment_list%}
+            <option value="{{investment.id}}">
+                {{investment}}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <div>
+
+        {{form.as_p}}
+        <input type="submit" value="Submit">
+    </div>
+</form>
+
+</body>
+</html>
