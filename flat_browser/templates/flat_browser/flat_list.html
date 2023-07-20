@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<table>
+    <caption>Lista mieszkań</caption>
+    <thead>
+    <th>Lp.</th>
+    <th>Inwestycja</th>
+    <th>Deweloper</th>
+    <th>Piętro</th>
+    <th>Pokoje</th>
+    <th>Powierzchnia</th>
+    <th>Cena</th>
+    <th>Status</th>
+    <th>Link do mieszkania</th>
+    </thead>
+    <tbody>
+    {% for flat in flat_list %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{flat.investment}}</td>
+        <td>{{flat.developer}}</td>
+        <td>{{flat.floor}}</td>
+        <td>{{flat.rooms}}</td>
+        <td>{{flat.area}}</td>
+        <td>{{flat.price}}</td>
+        <td>{{flat.status}}</td>
+        <td>{{flat.url}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div>
+    <button type="button">
+        <a href="{% url 'flat_browser:excel_file'%}">excel</a>
+    </button>
+</div>
+</body>
+</html>

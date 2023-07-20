@@ -1,2 +1,5 @@
 Django~=4.2.3
 psycopg2
+pandas~=2.0.3
+openpyxl
+UliPlot~=0.2.2
