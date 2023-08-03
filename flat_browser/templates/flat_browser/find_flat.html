@@ -1,30 +1,120 @@
-<!DOCTYPE html>
+{% load static %}
+{% load widget_tweaks %}
+
+
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'flat_browser/master.css' %}">
 </head>
+<header class="default-font">
+    <nav class="navbar navbar-expand-lg sticky-top bg-warning-subtle">
+        <div class="container-fluid">
+            <span class="navbar-brand fs-3">Menu</span>
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse"
+                 id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{% url 'flat_browser:developer'%}">Wybierz dewelopera</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>
 <body>
-<form method="get">
+<div class="container mt-6 d-flex justify-content-center">
 
-    <div>
-        <label for="investments">Lista dostępnych inwestycji wybranych deweloperów</label>
-        <select id="investments" name="invest" multiple>
-            {% for investment in investment_list%}
-            <option value="{{investment.id}}">
-                {{investment}}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
+    <form method="get" class="row">
+        <div class="col mx-5">
+            <h1 class="form-label text-center fs-2 mb-5">Dostępne inwestycje wybranych deweloperów</h1>
+            <select id="investments"
+                    class="form-select form-select-lg mb-3"
+                    size="10"
+                    aria-label="size 10 select example"
+                    name="invest"
+                    tabindex="0"
+                    data-bs-toggle="popover"
+                    data-bs-trigger="hover focus"
+                    data-bs-placement="left"
+                    data-bs-custom-class="custom-popover"
+                    data-bs-content="Jeżeli chcesz wybrać wszystkie inwestycje to pozostaw wszystkie opcje odznaczone"
+                    multiple>
+                {% for investment in investment_list%}
+                <option value="{{investment.id}}">
+                    {{investment}}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
 
 
-    <div>
+        <div class="col fs-4 mx-5" id="flats">
+            <h1 class="form-label text-center fs-2 mb-1">Podaj parametry wyszukiwanych mieszkań<h1>
 
-        {{form.as_p}}
-        <input type="submit" value="Submit">
-    </div>
-</form>
+            {% render_field form.floor_gte|add_label_class:"form-label fs-4" %}
+            {{form.floor_gte.errors}}
+            <div class="input-group">
+                {% render_field form.floor_gte class="form-control"%}
+                <span class="input-group-text">< =</span>
+                {% render_field form.floor_lte|add_class:"form-control" %}
+            </div>
 
+            {% render_field form.rooms_gte|add_label_class:"form-label fs-4" %}
+            {{form.rooms_gte.errors}}
+            <div class="input-group">
+                {% render_field form.rooms_gte|add_class:"form-control" %}
+                <span class="input-group-text">< =</span>
+                {% render_field form.rooms_lte|add_class:"form-control" %}
+            </div>
+
+            {% render_field form.area_gte|add_label_class:"form-label fs-4" %}
+            {{form.area_gte.errors}}
+            <div class="input-group">
+                {% render_field form.area_gte|add_class:"form-control" %}
+                <span class="input-group-text">< =</span>
+                {% render_field form.area_lte|add_class:"form-control" %}
+            </div>
+
+            {% render_field form.price_gte|add_label_class:"form-label fs-4" %}
+            {{form.price_gte.errors}}
+            <div class="input-group">
+                {% render_field form.price_gte|add_class:"form-control" %}
+                <span class="input-group-text">< =</span>
+                {% render_field form.price_lte|add_class:"form-control" %}
+            </div>
+            <div class="fs-6 my-1">
+                {% render_field form.status|add_label_class:"form-label fs-4" %}
+                {{form.status.errors}}
+                {% render_field form.status %}
+            </div>
+
+            <button type="submit"
+                    class="btn btn-outline-primary btn-lg mt-1">Pokaż mieszkania
+            </button>
+
+        </div>
+    </form>
+
+</div>
+<script>
+       const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+       const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+</script>
 </body>
 </html>

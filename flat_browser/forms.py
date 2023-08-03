@@ -1,6 +1,6 @@
 from django import forms
 from django.db.models import Max
-
+from django.core import validators
 from .models import Flat
 
 
@@ -9,23 +9,37 @@ class FlatForm(forms.Form):
         ('wolne', 'wolne'),
         ('sprzedane', 'sprzedane'),
         ('zarezerwowane', 'zarezerwowane')]
-    floor_gte = forms.IntegerField(label="Piętro od:", min_value=0, initial=0)
-    floor_lte = forms.IntegerField(label="Piętro do:", min_value=0)
-    rooms_gte = forms.IntegerField(label="Pokoje od:", min_value=0, initial=0)
-    rooms_lte = forms.IntegerField(label="Pokoje do:", min_value=0)
-    area_gte = forms.FloatField(label="Powierzchnia od:", min_value=0, initial=0)
-    area_lte = forms.FloatField(label="Powierzchnia do:", min_value=0)
-    price_gte = forms.FloatField(label="Cena od:", min_value=0, initial=0)
-    price_lte = forms.FloatField(label="Cena do:", min_value=0)
-    status = forms.MultipleChoiceField(label="Dostępność", widget=forms.CheckboxSelectMultiple, choices=FLAT_STATUS,
+
+    floor_gte = forms.IntegerField(label="Piętro:", min_value=0, initial=0)
+    floor_lte = forms.IntegerField(label="", min_value=0)
+    rooms_gte = forms.IntegerField(label="Pokoje", min_value=0, initial=0)
+    rooms_lte = forms.IntegerField(label="", min_value=0)
+    area_gte = forms.FloatField(label="Powierzchnia", min_value=0, initial=0)
+    area_lte = forms.FloatField(label="", min_value=0)
+    price_gte = forms.FloatField(label="Cena", min_value=0, initial=0)
+    price_lte = forms.FloatField(label="", min_value=0)
+    status = forms.MultipleChoiceField(label="Wybierz status mieszkania", widget=forms.CheckboxSelectMultiple,
+                                       choices=FLAT_STATUS,
                                        required=True, initial="wolne", error_messages={"required": "Zaznacz status."})
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         max_values = Flat.objects.aggregate(Max('floor'), Max('rooms'), Max('area'), Max('price'))
+
+        self.fields['floor_gte'].widget.attrs['max'] = max_values['floor__max']
+        self.fields['floor_lte'].widget.attrs['max'] = max_values['floor__max']
         self.fields['floor_lte'].initial = max_values['floor__max']
+
+        self.fields['rooms_gte'].widget.attrs['max'] = max_values['rooms__max']
+        self.fields['rooms_lte'].widget.attrs['max'] = max_values['rooms__max']
         self.fields['rooms_lte'].initial = max_values['rooms__max']
+
+        self.fields['area_gte'].widget.attrs['max'] = max_values['area__max']
+        self.fields['area_lte'].widget.attrs['max'] = max_values['area__max']
         self.fields['area_lte'].initial = max_values['area__max']
+
+        self.fields['price_gte'].widget.attrs['max'] = max_values['price__max']
+        self.fields['price_lte'].widget.attrs['max'] = max_values['price__max']
         self.fields['price_lte'].initial = max_values['price__max']
 
     def clean(self):

@@ -1,0 +1,96 @@
+@import url(https://fonts.googleapis.com/css?family=Dosis);
+
+
+body {
+    background-image: url("bg_page.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.container {
+    margin-bottom: 50px;
+    margin-top: 100px;
+
+}
+
+.btn-outline-primary {
+    background-color: rgb(70, 31, 3);
+    color: rgb(239, 174, 21);
+    border-color: rgb(205, 147, 14);
+    }
+
+.btn-outline-primary:hover {
+    background-color: rgb(231, 104, 13);
+    color: rgb(0, 0, 0);
+    }
+
+.form-select {
+    background-color: transparent;
+    width: 600px;
+    text-align: center;
+    
+}
+
+.form-label {
+    font-family: dosis;
+    font-size: 50px;
+    font-weight: lighter;
+}
+
+.custom-popover {
+  --bs-popover-font-size: 20px;
+  --bs-popover-max-width: 300px;
+  --bs-popover-border-color: rgb(70, 31, 3);
+  --bs-popover-border-width: 2px;
+  --bs-popover-bg: rgb(239, 174, 21);
+}
+
+.errorlist {
+    color: rgba(255, 0, 0, 0.851);
+    font-weight: bolder;
+    font-size:medium;
+    text-align: left;
+}
+
+h1 {
+    margin-bottom: 200px;
+}
+
+.table-hover tbody tr:hover td {
+    background-color: rgb(246, 238, 206);
+}
+
+.table-bordered tbody,
+.table-bordered thead {
+    border-width: 3px;
+    border-style: groove;
+}
+
+.table {
+    font-family: quicksand;
+    width: auto !important;
+    margin: auto;
+    text-align: center;
+    font-weight: 10px;
+}
+
+.table tbody tr td {
+    background-color: transparent;
+    font-style: oblique;
+
+}
+
+.bg-warning-subtle {
+    color: black;
+}
+
+.default-font {
+    font-family: dosis;
+    font-weight: lighter;
+    font-size: large
+}
+
+.fixed-bottom {
+    width: 130px;
+
+}
