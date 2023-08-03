@@ -1,28 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
+
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'flat_browser/master.css' %}">
 </head>
 <body>
-<form method="get" action="{% url 'flat_browser:find_flat'%}">
+<div class="container d-flex justify-content-center text-center">
+
+    <form method="get" action="{% url 'flat_browser:find_flat'%}">
 
 
-    <label for="developers">Lista dostępnych deweloperów</label>
-    <select id="developers" name="dev" multiple required>
-        <option disabled>Wybierz dewelopera</option>
-        {% for developer in developer_list%}
-        <option value="{{developer.id}}">
-            {{developer}}
-        </option>
-        {% endfor %}
-    </select>
-    <button type="submit">WYBIERZ</button>
-</form>
-<form method="get" action="{% url 'flat_browser:find_flat'%}">
-    <button type="submit">
-        kliknij tutaj aby wybrać wszystkich developerów i przejść dalej
-    </button>
-</form>
+        <label for="developers" class="form-label fs-1 text-center">Lista dostępnych deweloperów</label>
+        <select class="form-select form-select-lg mb-3" size="10" aria-label="size 10 select example" id="developers"
+                name="dev" multiple
+                required>
+            <option disabled>Wybierz dewelopera</option>
+            {% for developer in developer_list%}
+            <option value="{{developer.id}}">
+                {{developer}}
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-outline-primary">Zatwierdź wybranych deweloperów</button>
+    </form>
+</div>
+<div class="d-grid gap-2 d-md-block text-center">
+
+    <form method="get" action="{% url 'flat_browser:find_flat'%}">
+        <button type="submit" class="btn btn-outline-primary btn-lg">
+            Jeżeli chcesz wybrać wszystkich deweloperów po prostu
+            kliknij
+            tutaj i przejdź dalej
+        </button>
+    </form>
+</div>
 </body>
 </html>

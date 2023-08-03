@@ -1,23 +1,65 @@
-<!DOCTYPE html>
+{% load static %}
+{% load widget_tweaks %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'flat_browser/master.css' %}">
 </head>
+<header class="default-font">
+    <nav class="navbar navbar-expand-lg sticky-top bg-warning-subtle">
+        <div class="container-fluid">
+            <span class="navbar-brand fs-3">Menu</span>
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse"
+                 id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{% url 'flat_browser:developer'%}">Wybierz dewelopera</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'flat_browser:find_flat'%}">Inwestycje i parametry
+                            mieszkań</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>
 <body>
 
-<table>
-    <caption>Lista mieszkań</caption>
-    <thead>
-    <th>Lp.</th>
-    <th>Inwestycja</th>
-    <th>Deweloper</th>
-    <th>Piętro</th>
-    <th>Pokoje</th>
-    <th>Powierzchnia</th>
-    <th>Cena</th>
-    <th>Status</th>
-    <th>Link do mieszkania</th>
+<table
+        class="table table-hover table-bordered border-warning caption-top mb-5">
+    <caption class="default-font fs-1">Lista mieszkań <a
+            class="badge bg-warning-subtle bg-gradient"
+            href="{% url 'flat_browser:excel_file'%}">Pobierz tabelę</a></caption>
+    <thead class="table-warning">
+    <tr>
+        <th>Lp.</th>
+        <th>Inwestycja</th>
+        <th>Deweloper</th>
+        <th>Piętro</th>
+        <th>Pokoje</th>
+        <th>Powierzchnia</th>
+        <th>Cena</th>
+        <th>Status</th>
+        <th>Link do mieszkania</th>
+    </tr>
     </thead>
     <tbody>
     {% for flat in flat_list %}
@@ -35,10 +77,14 @@
     {% endfor %}
     </tbody>
 </table>
-<div>
-    <button type="button">
-        <a href="{% url 'flat_browser:excel_file'%}">excel</a>
-    </button>
-</div>
+
 </body>
+<footer>
+    <nav class="navbar fixed-bottom bg-light d-inline-flex p-2 justify-content-start">
+        <div class="container-fluid">
+            <a class="navbar-brand fs-6 fw-lighter" href="#top">
+                DO GÓRY<img src="{% static 'flat_browser/arrow_up.jpg' %}" width="40" height="30"></a>
+        </div>
+    </nav>
+</footer>
 </html>
