@@ -43,7 +43,7 @@ class FlatList(ListView):
             rooms__range=(flats['rooms_gte'], flats['rooms_lte']),
             price__range=(flats['price_gte'], flats['price_lte']),
             area__range=(flats['area_gte'], flats['area_lte']),
-            status__in=flats['status'])
+            status__in=flats['status']).order_by("developer__name", "investment__name", "status", "area")
         FlatList.flat_list = result_query
         return result_query
 
