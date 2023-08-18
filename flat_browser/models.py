@@ -10,6 +10,7 @@ class Developer(models.Model):
     url = models.URLField()
     insertion_date = models.DateTimeField(auto_now_add=True, editable=False, blank=True)
     last_modified = models.DateTimeField(auto_now=True, editable=False, blank=True)
+    scrape_attr = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
@@ -41,12 +42,12 @@ class Flat(models.Model):
 
     investment = models.ForeignKey("Investment", on_delete=models.CASCADE)
     developer = models.ForeignKey("Developer", on_delete=models.CASCADE)
-    floor = models.PositiveIntegerField()
-    rooms = models.PositiveIntegerField(validators=[MaxValueValidator(10)])
-    area = models.FloatField(validators=[MinValueValidator(0.00)])
-    price = models.FloatField(validators=[MinValueValidator(0.00)])
-    status = models.CharField(max_length=50, choices=FLAT_STATUS)
-    url = models.URLField()
+    floor = models.PositiveIntegerField(null=True)
+    rooms = models.PositiveIntegerField(validators=[MaxValueValidator(10)], null=True)
+    area = models.FloatField(validators=[MinValueValidator(0.00)], null=True)
+    price = models.FloatField(validators=[MinValueValidator(0.00)], null=True)
+    status = models.CharField(max_length=50, choices=FLAT_STATUS, null=True)
+    url = models.URLField(blank=True)
     insertion_date = models.DateField(auto_now_add=True, editable=False, blank=True)
 
     def __str__(self):
