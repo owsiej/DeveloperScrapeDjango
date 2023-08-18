@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'flat_scrape.apps.FlatScrapeConfig',
     'flat_browser.apps.FlatBrowserConfig',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView
 from django.http import HttpResponse
+from django.db.models import Q
 import pandas as pd
 import io
 from UliPlot.XLSX import auto_adjust_xlsx_column_width
@@ -38,12 +39,12 @@ class FlatList(ListView):
         investments = self.request.session['invest']
         flats = self.request.session['flat_filter']
         result_query = Flat.objects.filter(
-            investment__in=investments,
-            floor__range=(flats['floor_gte'], flats['floor_lte']),
-            rooms__range=(flats['rooms_gte'], flats['rooms_lte']),
-            price__range=(flats['price_gte'], flats['price_lte']),
-            area__range=(flats['area_gte'], flats['area_lte']),
-            status__in=flats['status']).order_by("developer__name", "investment__name", "status", "area")
+            Q(floor__range=(flats['floor_gte'], flats['floor_lte'])) | Q(floor__isnull=True),
+            Q(rooms__range=(flats['rooms_gte'], flats['rooms_lte'])) | Q(rooms__isnull=True),
+            Q(price__range=(flats['price_gte'], flats['price_lte'])) | Q(price__isnull=True),
+            Q(area__range=(flats['area_gte'], flats['area_lte'])) | Q(area__isnull=True),
+            status__in=flats['status'],
+            investment__in=investments).order_by("developer__name", "investment__name", "status", "area")
         FlatList.flat_list = result_query
         return result_query
 

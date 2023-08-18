@@ -1,6 +1,5 @@
 from django import forms
 from django.db.models import Max
-from django.core import validators
 from .models import Flat
 
 
