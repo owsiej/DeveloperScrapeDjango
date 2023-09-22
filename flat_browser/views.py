@@ -6,6 +6,8 @@ import pandas as pd
 import io
 from UliPlot.XLSX import auto_adjust_xlsx_column_width
 from itertools import groupby
+from datetime import datetime
+from openpyxl.styles import Alignment
 
 from .models import Developer, Investment, Flat
 from .forms import FlatForm
@@ -24,10 +26,7 @@ class InvestmentList(ListView):
     template_name = "flat_browser/find_flat.html"
 
     def get_queryset(self):
-        if FlatFormView.was_dev_chosen is True:
-            return Investment.objects.filter(developer__in=dict(self.request.GET)['dev'])
-        if FlatFormView.was_dev_chosen is False:
-            return Investment.objects.all()
+        return Investment.objects.filter(developer__in=self.request.session['dev'])
 
 
 class FlatList(ListView):
@@ -56,10 +55,8 @@ class FlatFormView(FormView):
     was_dev_chosen = None
 
     def get(self, request, *args, **kwargs):
-        if self.request.GET.get('dev'):
-            FlatFormView.was_dev_chosen = True
-        else:
-            FlatFormView.was_dev_chosen = False
+        if request.GET.get('dev'):
+            self.request.session['dev'] = dict(request.GET)['dev']
         if request.GET and not request.GET.get('dev'):
             form = FlatForm(request.GET)
             if form.is_valid():
@@ -76,7 +73,6 @@ class FlatFormView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.request.GET)
         context['investment_list'] = InvestmentList.get_queryset(self)
         invest_ids = list(map(lambda x: x.id, context['investment_list']))
         self.request.session['invest'] = invest_ids
@@ -101,8 +97,16 @@ def export_excel_file(request):
                   for flat in sorted_flats
                   for items in flat.items()
                   ]
+    summaryDataframe = create_summary_to_excel(dataframes, dev_names)
     memory_file = io.BytesIO()
     with pd.ExcelWriter(memory_file, engine="openpyxl") as writer:
+        summaryDataframe.to_excel(writer, sheet_name="Summary", startrow=1)
+        auto_adjust_xlsx_column_width(summaryDataframe, writer, sheet_name="Summary", margin=1)
+        writer.sheets['Summary'].merge_cells(start_row=1, start_column=1, end_row=1,
+                                             end_column=10)
+        writer.sheets['Summary'].cell(row=1, column=1).value = f"Creation datetime: " \
+                                                               f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        writer.sheets['Summary'].cell(row=1, column=1).alignment = Alignment(horizontal='center')
         for name, df in zip(dev_names, dataframes):
             df.to_excel(writer, name)
             auto_adjust_xlsx_column_width(df, writer, sheet_name=name, margin=1)
@@ -114,3 +118,38 @@ def export_excel_file(request):
                                 "Content-Disposition": 'attachment; filename="foo.xls"'
                             })
     return response
+
+
+def create_summary_to_excel(dataframes: list, developer_names: list):
+    summary = []
+    for dataframe, developer_name in zip(dataframes, developer_names):
+        summary.append({"developer": developer_name})
+        investments = dataframe.groupby(by="investment__name")
+        for investment in investments:
+            currentInvestment = investments.get_group(investment[0])
+            flatsStatus = currentInvestment['status'].value_counts(dropna=False).to_dict()
+            if flatsStatus.get('wolne') is None:
+                flatsStatus['wolne'] = 0
+            if flatsStatus.get(None) is None:
+                flatsStatus[None] = 0
+            if flatsStatus.get('zarezerwowane') is None:
+                flatsStatus['zarezerwowane'] = 0
+            if flatsStatus.get('sprzedane') is None:
+                flatsStatus['sprzedane'] = 0
+            flatsToPricePerSqm = currentInvestment[
+                currentInvestment['area'].notnull() & currentInvestment['status'].ne("sprzedane")]
+            investmentSummary = {
+                "investment_name": investment[0],
+                "amount_of_all_flats": len(currentInvestment),
+                "average_min_price_per_m2": round((flatsToPricePerSqm['price'] / flatsToPricePerSqm['area']).min(), 2),
+                "average_max_price_per_m2": round((flatsToPricePerSqm['price'] / flatsToPricePerSqm['area']).max(), 2),
+                "amount_of_free_flats": flatsStatus['wolne'] + flatsStatus[None],
+                "amount_of_reserved_flats": flatsStatus.get('zarezerwowane'),
+                "amount_of_sold_flats": flatsStatus.get('sprzedane'),
+                "percentage_to_sold/all_flats": round(
+                    (len(currentInvestment) - flatsStatus['wolne'] - flatsStatus[None] -
+                     flatsStatus['zarezerwowane']) / len(currentInvestment), 2)
+            }
+            summary.append(investmentSummary)
+    summaryDf = pd.DataFrame(summary)
+    return summaryDf

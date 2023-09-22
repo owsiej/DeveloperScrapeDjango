@@ -1,7 +1,9 @@
-<!DOCTYPE html>
+{% load static %}
+{% load custom_filter %}
+
+
 <html lang="en">
 <head>
-    {% load static %}
 
     <meta charset="UTF-8">
     <title>Title</title>
@@ -35,6 +37,13 @@
 <div class="d-grid gap-2 d-md-block text-center">
 
     <form method="get" action="{% url 'flat_browser:find_flat'%}">
+        <select name="dev" hidden multiple>
+            {% for developer in developer_list%}
+            <option value="{{developer.id}}" selected>
+                {{developer}}
+            </option>
+            {% endfor %}
+        </select>
         <button type="submit" class="btn btn-outline-primary btn-lg">
             Jeżeli chcesz wybrać wszystkich deweloperów po prostu
             kliknij
