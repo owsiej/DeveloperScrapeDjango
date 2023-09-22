@@ -28,7 +28,7 @@ def standardize_status(status):
 
 def standardize_floor_number(number):
     try:
-        if number:
+        if number == 0 or number:
             return int(number)
         else:
             return None

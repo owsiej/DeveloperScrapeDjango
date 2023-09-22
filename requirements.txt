@@ -8,3 +8,5 @@ beautifulsoup4~=4.12.2
 selenium~=4.11.2
 python-dotenv
 webdriver_manager
+aiohttp~=3.8.5
+lxml~=4.9.3

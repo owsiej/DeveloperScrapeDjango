@@ -1,4 +1,7 @@
-from .scrape_functions import get_developer_info, get_developer_investments, get_investment_flats
+import asyncio
+from itertools import chain
+
+from .scrape_functions import get_developer_info, get_developer_investments, get_investment_flats, collect_flats_data
 
 developerName = 'Yuniversal Podlaski'
 baseUrl = 'https://www.yuniversalpodlaski.pl/'
@@ -15,8 +18,7 @@ flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr', class_='lokal_row')",
                  'roomsAmount': ".find(class_='t_pokoje').get_text()",
                  'area': ".find(class_='t_metraz').get_text().replace('m²', '').strip()",
                  'price': ".find(class_='t_cena').get_text().split('PLN')[0].strip().replace(',', '.').replace(' ','')",
-                 'status': ".find(class_='t_metraz').find_next_sibling().get_text()"
-                           ".encode('iso-8859-1').decode('utf-8')"}
+                 'status': ".find(class_='t_metraz').find_next_sibling().get_text()"}
 
 
 def get_developer_data():
@@ -35,5 +37,7 @@ def get_investments_data():
 
 def get_flats_data():
     investmentsData = get_investments_data()
-    flatsData = get_investment_flats(investmentsData, flatsHtmlInfo)
+    flatsData = list(chain.from_iterable(asyncio.run(
+        collect_flats_data(investmentsInfo=investmentsData, htmlDataFlat=flatsHtmlInfo,
+                           function=get_investment_flats))))
     return flatsData

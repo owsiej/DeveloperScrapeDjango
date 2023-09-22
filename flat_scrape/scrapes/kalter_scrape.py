@@ -1,18 +1,22 @@
-from .scrape_functions import get_developer_info, get_investment_flats
+from itertools import chain
+import asyncio
+
+from .scrape_functions import get_developer_info, get_investment_flats, collect_flats_data, get_developer_investments
 
 developerName = 'Kalter Nieruchomości'
 baseUrl = 'https://www.kalternieruchomosci.pl/pl/oferta-mieszkan'
 
-investmentsInfo = [{'name': 'Słonimska Residence', 'url': "https://www.kalternieruchomosci.pl/pl/wyniki-wyszukiwania"
-                                                          "?s_city=1&s_inwest=&s_typ=&s_status=&s_pokoje=&s_metry="
-                                                          "&s_aneks=&s_garden=0&s_deck=0&a=szukaj"}]
+investmentHtmlInfo = {'investmentTag': ".find_all('span', text='Białystok')",
+                      'investmentName': ".parent.next_sibling.next_sibling.h2.get_text().title()",
+                      'investmentLink': ".parent.parent.get('href')"}
 
-flatsHtmlInfo = {'flatTag': ".find('div', id='offerList').find_all('div', class_='col-12 col-list dostepny-list')",
-                 'floorNumber': ".find('li', class_='li-inwest-rwd').span.get_text()",
-                 'roomsAmount': ".li.span.get_text()",
-                 'area': ".li.span.find_next('span').get_text().replace('m2', '').strip().replace(',', '.')",
-                 'price': "",
-                 'status': ".find('div', class_='col text-center').get_text().strip()"}
+flatsHtmlInfo = {
+    'flatTag': ".find('div', id='offerList').find_all('div', class_=re.compile('col-12 col-list'), attrs={'data-url':re.compile('M\d+$')})",
+    'floorNumber': ".find('li', class_='li-inwest-rwd').span.get_text()",
+    'roomsAmount': ".li.span.get_text()",
+    'area': ".find('li', class_='li-inwest-rwd').find_previous_sibling().span.get_text().replace('m2', '').strip().replace(',', '.')",
+    'price': "",
+    'status': ".find('div', class_='col text-center').get_text().strip()"}
 
 
 def get_developer_data():
@@ -21,10 +25,12 @@ def get_developer_data():
 
 
 def get_investments_data():
-    investmentsData = investmentsInfo
+    investmentsData = get_developer_investments(url=baseUrl, htmlData=investmentHtmlInfo)
     return investmentsData
 
 
 def get_flats_data():
-    flatsData = get_investment_flats(investmentsInfo, flatsHtmlInfo)
+    flatsData = list(chain.from_iterable(asyncio.run(
+        collect_flats_data(investmentsInfo=get_investments_data(), htmlDataFlat=flatsHtmlInfo,
+                           function=get_investment_flats))))
     return flatsData

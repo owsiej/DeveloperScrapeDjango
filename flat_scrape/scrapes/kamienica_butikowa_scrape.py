@@ -1,17 +1,20 @@
-from .scrape_functions import get_developer_info, get_investment_flats
+import asyncio
+from itertools import chain
+
+from .scrape_functions import get_developer_info, get_investment_flats_xpath, collect_flats_data
 
 developerName = 'Kamienica Butikowa'
 baseUrl = 'https://www.butikowa-kamienica.pl/apartamenty.html'
 
-investmentsInfo = [{'name': 'Kamienica Butikowa', 'url': 'https://www.butikowa-kamienica.pl/apartamenty.html'}]
+investmentsInfo = [{'name': 'Kamienica Butikowa Kijowska', 'url': 'https://www.butikowa-kamienica.pl/apartamenty.html'}]
 
-flatsHtmlInfo = {'flatTag': ".find(class_='ps550 v37 s495 z472').find_all('div', {'data-popup-group': '0'})",
-                 'floorNumber': "",
-                 'roomsAmount': ".p.find_next_sibling().get_text().split()[2]",
-                 'area': ".p.find_next_sibling().find_next_sibling().get_text().split()[1]"
-                         ".replace('m2', '').replace(',','.').strip()",
-                 'price': "",
-                 'status': ".p.find_next_sibling().find_next_sibling().find_next_sibling().get_text().split()[1]"}
+flatsHtmlInfo = {
+    'flatTag': """.xpath("//div[(@class='v1 ps7 s141') or (@class='v1 ps186 s209')]//div[contains(@id,'popup')]")""",
+    'floorNumber': ".xpath('./div/p[5]/a/@href')[0].split('_')[-1][1]",
+    'roomsAmount': ".xpath('./div/p[2]/text()')[0].strip().split()[-1]",
+    'area': ".xpath('./div/p[3]/text()')[0].split()[1].replace('.m', '')",
+    'price': "",
+    'status': ".xpath('./div/p[4]/text()')[0].split()[-1]"}
 
 
 def get_developer_data():
@@ -25,5 +28,7 @@ def get_investments_data():
 
 
 def get_flats_data():
-    flatsData = get_investment_flats(investmentsInfo, flatsHtmlInfo)
+    flatsData = list(chain.from_iterable(asyncio.run(
+        collect_flats_data(investmentsInfo=investmentsInfo, htmlDataFlat=flatsHtmlInfo,
+                           function=get_investment_flats_xpath))))
     return flatsData
