@@ -76,6 +76,7 @@ class FlatFormView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(self.request.GET)
         context['investment_list'] = InvestmentList.get_queryset(self)
         invest_ids = list(map(lambda x: x.id, context['investment_list']))
         self.request.session['invest'] = invest_ids

@@ -1,5 +1,8 @@
+from itertools import chain
+import asyncio
+
 from .scrape_functions import get_developer_info, get_developer_investments, \
-    get_investment_flats_from_api_condition
+    get_investment_flats_from_api_condition, collect_flats_data
 
 developerName = 'Rutkowski Development'
 baseUrl = 'https://rutkowskidevelopment.pl/oferta/'
@@ -11,7 +14,7 @@ investmentHtmlInfo = {
     'investmentLink': "['href']"}
 
 flatsHtmlInfo = {'dataLocation': "['lokale']",
-                 'dataCondition': "flat['osiedle'] == investment['name'] and flat['typ'] == 'Mieszkanie'",
+                 'dataCondition': "flat['osiedle'] == investName and flat['typ'] == 'Mieszkanie'",
                  'floorNumber': "['pietro']",
                  'roomsAmount': "['liczba_pokoi']",
                  'area': "['powierzchnia']",
@@ -35,5 +38,8 @@ def get_flats_data():
         'name': name['name'],
         'url': link}
         for name, link in zip(investmentsData, apiUrls)]
-    flatsData = get_investment_flats_from_api_condition(investmentsApiInfo, flatsHtmlInfo)
+
+    flatsData = list(chain.from_iterable(
+        asyncio.run(collect_flats_data(investmentsInfo=investmentsApiInfo, htmlDataFlat=flatsHtmlInfo,
+                                       function=get_investment_flats_from_api_condition))))
     return flatsData

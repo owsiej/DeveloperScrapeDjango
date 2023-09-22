@@ -1,6 +1,9 @@
+import asyncio
+from itertools import chain
+
 from .scrape_functions import get_developer_info, get_developer_investments, \
     get_all_buildings_from_investment, \
-    get_investment_flats
+    get_investment_flats, collect_investment_data, collect_flats_data
 
 developerName = 'Kombinat Budowlany'
 baseUrl = 'https://www.kombinatbud.com.pl'
@@ -44,7 +47,10 @@ def get_developer_data():
 
 def get_investments_data():
     investmentsInfo = get_developer_investments(baseUrl + baseTag, investmentsHtmlInfo)
-    buildingsInfo = get_all_buildings_from_investment(investmentsInfo, investmentBuildingsHtmlInfo, baseUrl)
+
+    buildingsInfo = list(chain.from_iterable(asyncio.run(
+        collect_investment_data(investmentsInfo=investmentsInfo, htmlData=investmentBuildingsHtmlInfo, baseUrl=baseUrl,
+                                function=get_all_buildings_from_investment))))
     investmentsData = list(map(lambda item: {
         'name': item['name'],
         'url': baseUrl + item['url']
@@ -55,7 +61,12 @@ def get_investments_data():
 
 def get_flats_data():
     investmentsData = get_investments_data()
-    flatsRestInfo = get_investment_flats(investmentsData, flatsRestHtmlInfo)
-    flatsReservedInfo = get_investment_flats(investmentsData, flatsReservedHtmlInfo)
+
+    flatsRestInfo = list(chain.from_iterable(
+        asyncio.run(collect_flats_data(investmentsInfo=investmentsData, htmlDataFlat=flatsRestHtmlInfo,
+                                       function=get_investment_flats))))
+    flatsReservedInfo = list(chain.from_iterable(asyncio.run(
+        collect_flats_data(investmentsInfo=investmentsData, htmlDataFlat=flatsReservedHtmlInfo,
+                           function=get_investment_flats))))
     flatsData = flatsReservedInfo + flatsRestInfo
     return flatsData

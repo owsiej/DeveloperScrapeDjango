@@ -1,4 +1,7 @@
-from .scrape_functions import get_developer_info, get_investment_flats
+import asyncio
+from itertools import chain
+
+from .scrape_functions import get_developer_info, get_investment_flats, collect_flats_data
 
 developerName = 'Birkbud'
 baseUrl = 'https://www.birkbud.pl/nieruchomosci/'
@@ -35,7 +38,11 @@ def get_investments_data():
 
 
 def get_flats_data():
-    flatsInfo = get_investment_flats(investmentsInfo, flatsHtmlInfo)
-    flatsInfo2 = get_investment_flats(investmentsInfo_2, flatsHtmlInfo_2)
+    flatsInfo = list(chain.from_iterable(asyncio.run(
+        collect_flats_data(investmentsInfo=investmentsInfo, htmlDataFlat=flatsHtmlInfo,
+                           function=get_investment_flats))))
+    flatsInfo2 = list(chain.from_iterable(asyncio.run(
+        collect_flats_data(investmentsInfo=investmentsInfo_2, htmlDataFlat=flatsHtmlInfo_2,
+                           function=get_investment_flats))))
     flatsData = flatsInfo + flatsInfo2
     return flatsData

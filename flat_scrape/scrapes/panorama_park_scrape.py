@@ -1,4 +1,7 @@
-from .scrape_functions import get_developer_info, get_investment_flats_from_api
+import asyncio
+from itertools import chain
+
+from .scrape_functions import get_developer_info, get_investment_flats_from_api, collect_flats_data
 
 developerName = 'Panorama Park'
 baseUrl = 'http://panoramabialystok.pl/'
@@ -34,5 +37,7 @@ def get_investments_data():
 
 
 def get_flats_data():
-    flatsData = get_investment_flats_from_api(investmentsApiInfo, flatsHtmlInfo)
+    flatsData = list(chain.from_iterable(
+        asyncio.run(collect_flats_data(investmentsInfo=investmentsApiInfo, htmlDataFlat=flatsHtmlInfo,
+                                       function=get_investment_flats_from_api))))
     return flatsData
