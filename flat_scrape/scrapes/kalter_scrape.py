@@ -16,7 +16,9 @@ flatsHtmlInfo = {
     'roomsAmount': ".li.span.get_text()",
     'area': ".find('li', class_='li-inwest-rwd').find_previous_sibling().span.get_text().replace('m2', '').strip().replace(',', '.')",
     'price': "",
-    'status': ".find('div', class_='col text-center').get_text().strip()"}
+    'status': ".find('div', class_='col text-center').get_text().strip()",
+    'url': ".find('div', class_='col text-right').a['href']",
+    'baseUrl': ""}
 
 
 def get_developer_data():

@@ -15,7 +15,9 @@ flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr')",
                  'roomsAmount': ".find_all('a')[2].get_text()",
                  'area': ".find_all('a')[1].get_text().replace('m2', '').strip()",
                  'price': ".find_all('a')[4].get_text().replace('zł', '').strip().replace(' ', '')",
-                 'status': ".find_all('td')[-1].get_text()"}
+                 'status': ".find_all('td')[-1].get_text()",
+                 'url': ".find_all('a')[0]['href']",
+                 'baseUrl': ""}
 
 
 def get_developer_data():

@@ -43,60 +43,65 @@
     </nav>
 </header>
 <body>
-<div class="row">
-    <div class="col">
-        <div id="list-example" class="list-group w-50 m-auto mt-5 mx-auto">
-            <label class="default-font fs-5 fw-semibold mb-2">Przeskocz do
-                <img src="{% static 'flat_browser/arrow_down.png' %}" width="30" height="20"></label>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div id="list-example" class="list-group w-50 m-auto mt-5 mx-auto">
+                <label class="default-font fs-5 fw-semibold mb-2">Przeskocz do
+                    <img src="{% static 'flat_browser/arrow_down.png' %}" width="30" height="20"></label>
 
-            {% for name in flat_list|get_unique:"developer__name" %}
-            <a class="list-group-item list-group-item-action bg-warning-subtle"
-               href="#{{name}}">{{name}}</a>
-            {% endfor %}
+                {% for name in flat_list|get_unique:"developer__name" %}
+                <a class="list-group-item list-group-item-action bg-warning-subtle"
+                   href="#{{name}}">{{name}}</a>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-    <div class="col-9">
+        <div class="col-9">
 
-        <table
-                class="table table-hover table-bordered border-warning caption-top mb-5 ms-5">
-            <caption class="default-font fs-1">Lista mieszkań <a
-                    class="badge bg-warning-subtle bg-gradient"
-                    href="{% url 'flat_browser:excel_file'%}">Pobierz tabelę</a></caption>
-            <thead class="table-warning">
-            <tr>
-                <th>Lp.</th>
-                <th>Inwestycja</th>
-                <th>Deweloper</th>
-                <th>Piętro</th>
-                <th>Pokoje</th>
-                <th>Powierzchnia [m<sup>2</sup>]</th>
-                <th>Cena [zł]</th>
-                <th>Status</th>
-                <th>Link do mieszkania</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% regroup flat_list by developer.name as developers %}
-            {% for developer in developers %}
-            <tr>
-                <td class="fw-bold fs-5 fst-normal" id="{{developer.grouper}}" colspan="9">{{developer.grouper}}</td>
-            </tr>
-            {% for flat in developer.list %}
-            <tr>
-                <td>{{forloop.counter}}</td>
-                <td>{{flat.investment}}</td>
-                <td>{{flat.developer}}</td>
-                <td>{{flat.floor}}</td>
-                <td>{{flat.rooms}}</td>
-                <td>{{flat.area}}</td>
-                <td>{{flat.price}}</td>
-                <td>{{flat.status}}</td>
-                <td><a href="{{flat.url}}">{{flat.url}}</a></td>
-            </tr>
-            {% endfor %}
-            {% endfor %}
-            </tbody>
-        </table>
+            <table
+                    class="table table-hover table-bordered border-warning caption-top mb-5 ms-5">
+                <caption class="default-font fs-1">Lista mieszkań <a
+                        class="badge bg-warning-subtle bg-gradient"
+                        href="{% url 'flat_browser:excel_file'%}">Pobierz tabelę</a></caption>
+                <thead class="table-warning">
+                <tr>
+                    <th>Lp.</th>
+                    <th>Inwestycja</th>
+                    <th>Deweloper</th>
+                    <th>Piętro</th>
+                    <th>Pokoje</th>
+                    <th>Powierzchnia [m<sup>2</sup>]</th>
+                    <th>Cena [zł]</th>
+                    <th>Status</th>
+                    <th>Link do mieszkania</th>
+                </tr>
+                </thead>
+                <tbody class="align-middle">
+                {% regroup flat_list by developer.name as developers %}
+                {% for developer in developers %}
+                <tr>
+                    <td class="fw-bold fs-5 fst-normal" id="{{developer.grouper}}" colspan="9">{{developer.grouper}}
+                    </td>
+                </tr>
+                {% for flat in developer.list %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{flat.investment}}</td>
+                    <td>{{flat.developer}}</td>
+                    <td>{{flat.floor}}</td>
+                    <td>{{flat.rooms}}</td>
+                    <td>{{flat.area}}</td>
+                    <td>{{flat.price}}</td>
+                    <td>{{flat.status}}</td>
+                    <td><a class="btn btn-outline-primary btn-lg mt-1" href="{{flat.url}}" role="button"
+                           target="_blank">Sprawdź
+                        mieszkanie</a></td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 </body>
