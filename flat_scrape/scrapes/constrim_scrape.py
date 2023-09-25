@@ -21,7 +21,9 @@ flatsHtmlInfo = {'dataLocation': "['flats']",
                  'roomsAmount': "['rooms']",
                  'area': "['area']",
                  'price': "",
-                 'status': "['availability']"}
+                 'status': "['availability']",
+                 'url': "['flatFile']",
+                 'baseUrl': ""}
 
 
 def get_developer_data():
@@ -43,4 +45,9 @@ def get_flats_data():
     flatsData = list(chain.from_iterable(
         asyncio.run(collect_flats_data(investmentsInfo=investmentsApiInfo, htmlDataFlat=flatsHtmlInfo,
                                        function=get_investment_flats_from_api_condition))))
+    for flat in flatsData:
+        for invest in investmentsApiInfo:
+            if flat['invest_name'] == invest['name']:
+                flat['url'] = invest['url'][:-16] + flat['url']
+
     return flatsData

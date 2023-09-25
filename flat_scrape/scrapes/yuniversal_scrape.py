@@ -18,7 +18,9 @@ flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr', class_='lokal_row')",
                  'roomsAmount': ".find(class_='t_pokoje').get_text()",
                  'area': ".find(class_='t_metraz').get_text().replace('m²', '').strip()",
                  'price': ".find(class_='t_cena').get_text().split('PLN')[0].strip().replace(',', '.').replace(' ','')",
-                 'status': ".find(class_='t_metraz').find_next_sibling().get_text()"}
+                 'status': ".find(class_='t_metraz').find_next_sibling().get_text()",
+                 'url': ".find(class_='t_sprawdz').a['href']",
+                 'baseUrl': "https://www.yuniversalpodlaski.pl"}
 
 
 def get_developer_data():

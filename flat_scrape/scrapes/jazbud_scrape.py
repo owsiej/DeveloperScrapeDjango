@@ -21,7 +21,9 @@ flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr')",
                  'roomsAmount': ".find('td', {'data-order':re.compile('^pokoje')}).span.get_text(strip=True)  if flat.find('td', {'data-order':re.compile('^pokoje')}) else None",
                  'area': ".find('td', {'data-order':re.compile('^powierzchnia')}).span.get_text(strip=True).replace('m2','')  if flat.find('td', {'data-order':re.compile('^powierzchnia')}) else None",
                  'price': ".find('td', {'data-order':re.compile('^[0-9]')}).div.get_text(strip=True).replace('zł', '') if flat.find('td', {'data-order':re.compile('^[0-9]')}) else None",
-                 'status': ""}
+                 'status': "",
+                 "url": ".find('td', {'data-order':'Zobacz plan'}).a['href'] if flat.find('td', {'data-order':'Zobacz plan'}) else None",
+                 "baseUrl": "https://www.jaz-bud.pl"}
 
 
 def get_developer_data():
@@ -47,4 +49,5 @@ def get_flats_data():
     flatsData = list(chain.from_iterable(asyncio.run(
         collect_flats_data(investmentsInfo=investmentsFinalInfo, htmlDataFlat=flatsHtmlInfo,
                            function=get_investment_flats))))
+
     return flatsData

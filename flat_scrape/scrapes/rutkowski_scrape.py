@@ -19,7 +19,9 @@ flatsHtmlInfo = {'dataLocation': "['lokale']",
                  'roomsAmount': "['liczba_pokoi']",
                  'area': "['powierzchnia']",
                  'price': "",
-                 'status': "['status']"}
+                 'status': "['status']",
+                 'url': "['FullNumber'].replace('Duo Apartamenty', '').strip().replace(' ', '-').lower()",
+                 'baseUrl': "https://rutkowskidevelopment.pl/oferty/duo-apartamenty-"}
 
 
 def get_developer_data():

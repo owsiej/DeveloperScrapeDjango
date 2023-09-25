@@ -23,7 +23,9 @@ flatsHtmlInfo = {'floorNumber': "['value']['545']",
                  'roomsAmount': "['value']['pokoje']",
                  'area': "['value']['powierzchnia'].replace('mkw.', '').strip().replace(',', '.')",
                  'price': "['value']['cena']",
-                 'status': "['value']['status']"}
+                 'status': "['value']['status']",
+                 'url': """['value']['zrzut'].split('"')[1]""",
+                 'baseUrl': ""}
 
 
 def get_developer_data():

@@ -15,7 +15,9 @@ flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr')",
                  'roomsAmount': ".find_all('td')[5].get_text(strip=True)",
                  'area': ".find_all('td')[3].get_text(strip=True)",
                  'price': ".find_all('td')[7].get_text().replace(' zł', '')",
-                 'status': ".find_all('td')[-4].get_text(strip=True)"}
+                 'status': ".find_all('td')[-4].get_text(strip=True)",
+                 'url': ".find_all('td')[-1].a['href']",
+                 'baseUrl': ''}
 
 
 def get_all_pages_with_flats(investsData):

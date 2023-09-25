@@ -168,7 +168,8 @@ async def get_investment_flats(investLink: str, investName: str, htmlData: dict,
                 'price': std.standardize_price_and_area(
                     unicodedata.normalize('NFKD', eval(f"flat{htmlData['price']}"))) if htmlData[
                     'price'] else 0,
-                'status': std.standardize_status(eval(f"flat{htmlData['status']}"))
+                'status': std.standardize_status(eval(f"flat{htmlData['status']}")),
+                'url': htmlData['baseUrl'] + eval(f"flat{htmlData['url']}")
             })
 
     return flats
@@ -213,7 +214,8 @@ async def get_investment_flats_post(investLink: str, investName: str, htmlData: 
                 'price': std.standardize_price_and_area(
                     unicodedata.normalize('NFKD', eval(f"flat{htmlData['price']}"))) if htmlData[
                     'price'] else 0,
-                'status': std.standardize_status(eval(f"flat{htmlData['status']}"))
+                'status': std.standardize_status(eval(f"flat{htmlData['status']}")),
+                'url': htmlData['baseUrl'] + eval(f"flat{htmlData['url']}")
             })
 
     return flats
@@ -259,7 +261,8 @@ async def get_investment_flats_xpath(investLink: str, investName: str, htmlData:
                 'price': std.standardize_price_and_area(
                     unicodedata.normalize('NFKD', eval(f"flat{htmlData['price']}"))) if htmlData[
                     'price'] else 0,
-                'status': std.standardize_status(eval(f"flat{htmlData['status']}"))
+                'status': std.standardize_status(eval(f"flat{htmlData['status']}")),
+                'url': htmlData['baseUrl'] + eval(f"flat{htmlData['url']}")
             })
 
     return flats
@@ -298,7 +301,8 @@ async def get_investment_flats_from_api(investLink: str, investName: str, htmlDa
             'price': std.standardize_price_and_area(
                 unicodedata.normalize('NFKD', eval(f"flat{htmlData['price']}"))) if htmlData[
                 'price'] else None,
-            'status': std.standardize_status(eval(f"flat{htmlData['status']}"))
+            'status': std.standardize_status(eval(f"flat{htmlData['status']}")),
+            'url': htmlData['baseUrl'] + eval(f"flat{htmlData['url']}")
         })
 
     return flats
@@ -338,7 +342,8 @@ async def get_investment_flats_from_api_condition(investLink: str, investName: s
                 'price': std.standardize_price_and_area(
                     unicodedata.normalize('NFKD', eval(f"flat{htmlData['price']}"))) if htmlData[
                     'price'] else None,
-                'status': std.standardize_status(eval(f"flat{htmlData['status']}"))
+                'status': std.standardize_status(eval(f"flat{htmlData['status']}")),
+                'url': htmlData['baseUrl'] + eval(f"flat{htmlData['url']}")
             })
 
     return flats

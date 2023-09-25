@@ -20,7 +20,9 @@ flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr')[1:]",
                  'roomsAmount': ".find(attrs={'data-th':'Liczba pokoi'}).get_text().strip()",
                  'area': ".find(attrs={'data-th':'Metraż'}).get_text().replace('m2', '').strip()",
                  'price': "",
-                 'status': ".find(attrs={'data-th':'Status'}).get_text().strip()"}
+                 'status': ".find(attrs={'data-th':'Status'}).get_text().strip()",
+                 'url': ".find(attrs={'data-th':'Numer'}).a['href']",
+                 'baseUrl': "https://apartamentyjagiellonskie.pl"}
 
 
 def get_developer_data():
@@ -37,4 +39,5 @@ def get_flats_data():
     flatsData = list(chain.from_iterable(asyncio.run(
         collect_flats_data(investmentsInfo=investmentsInfo, htmlDataFlat=flatsHtmlInfo,
                            function=get_investment_flats))))
+
     return flatsData

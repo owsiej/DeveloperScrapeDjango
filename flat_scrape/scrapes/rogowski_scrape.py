@@ -22,11 +22,14 @@ investmentBuildingsIdsHtmlInfo = {'buildingTag': ".select('[data-id]')",
                                   'buildingName': "['name']",
                                   'buildingLink': "['data-id']"}
 
-flatsHtmlInfo = {'floorNumber': "['floor_number'][0]['floor_number']",
-                 'roomsAmount': "['rooms']",
-                 'area': "['sqm']",
-                 'price': "['price']",
-                 'status': "['state'][0]"}
+flatsHtmlInfo = {
+    'floorNumber': "['floor_number'][0]['floor_number'] if isinstance(flat['floor_number'], list) else None",
+    'roomsAmount': "['rooms']",
+    'area': "['sqm']",
+    'price': "['price']",
+    'status': "['state'][0]",
+    'url': "['link']",
+    "baseUrl": ""}
 
 
 def get_developer_data():

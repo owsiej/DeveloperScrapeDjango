@@ -97,6 +97,7 @@ class DeveloperAdmin(admin.ModelAdmin):
                                 area=flat['area'],
                                 price=flat['price'],
                                 status=flat['status'],
+                                url=flat['url'],
                                 developer=dev,
                                 investment=dev_investments[flat['invest_name']])
                     for flat in flats

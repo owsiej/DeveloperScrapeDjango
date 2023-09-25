@@ -38,7 +38,7 @@
     </nav>
 </header>
 <body>
-<div class="container mt-6 d-flex justify-content-center">
+<div class="container-fluid mt-6 d-flex justify-content-center mt-5">
 
     <form method="get" class="row">
         <div class="col mx-5">
@@ -65,7 +65,7 @@
 
 
         <div class="col fs-4 mx-5" id="flats">
-            <h1 class="form-label text-center fs-2 mb-1">Podaj parametry wyszukiwanych mieszkań<h1>
+            <h1 class="form-label text-center fs-2 mb-1">Podaj parametry wyszukiwanych mieszkań</h1>
 
             {% render_field form.floor_gte|add_label_class:"form-label fs-4" %}
             {{form.floor_gte.errors}}
@@ -115,6 +115,8 @@
 <script>
        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+
 </script>
 </body>
 </html>

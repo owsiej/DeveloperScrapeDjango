@@ -150,13 +150,14 @@ def get_flats_data():
     flats = json.loads(match.group(1))
     formattedFlats = []
     for key, value in flats.items():
-        if re.match("^[a-z][0-9]+$", key):
+        if re.match("^[wgm][0-9]+$", key):
             formattedFlats.append({
                 "invest_name": flatToInvestName[key[0]],
                 "floor_number": std.standardize_floor_number(flatToFloor[key]),
                 "rooms_number": std.standardize_rooms(value["ilosc_pokoi"]),
                 "area": std.standardize_price_and_area(value["powierzchnia"]),
                 "price": std.standardize_price_and_area(value["cena"].replace(" ", "")),
-                "status": std.standardize_status(value["status"])
+                "status": std.standardize_status(value["status"]),
+                "url": "https://rdminwestycje.pl/mieszkania/" + key
             })
     return formattedFlats
