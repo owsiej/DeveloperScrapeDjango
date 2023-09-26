@@ -10,6 +10,7 @@ from functools import partial
 import json
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -18,10 +19,12 @@ from selenium.webdriver.chrome.options import Options
 from . import standardize_flat_info as std
 from .scrape_functions import get_developer_info, get_developer_investments, get_html_response, collect_investment_data
 
+load_dotenv()
+
 
 class ChromeDriver:
     def __init__(self):
-        self.driverPath = os.getenv("CHROME_DRIVER_PATH")
+        self.driverPath = os.environ.get("CHROME_DRIVER_PATH")
         self.service = Service(executable_path=self.driverPath)
         self.options = Options()
         # self.options.add_experimental_option("detach", True)

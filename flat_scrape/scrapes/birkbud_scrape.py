@@ -17,7 +17,8 @@ flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr')",
                  'area': ".find(class_='column-3').get_text().replace('m²', '').replace(',', '.').strip()",
                  'price': '',
                  'status': ".find(class_='column-8').get_text().strip()",
-                 'url': ".find(class_='column-7').a['href']"}
+                 'url': ".find(class_='column-7').a['href']",
+                 'baseUrl': ""}
 
 investmentsInfo_2 = [{'name': 'Inwestycja Andruszkiewicza', 'url': 'https://www.birkbud.pl/andrukiewicza/'}]
 
