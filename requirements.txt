@@ -1,12 +1,11 @@
-Django==4.2.4
-psycopg2
-pandas~=2.0.3
+Django==4.2.5
+psycopg2==2.9.7
+pandas==2.1.1
 openpyxl
 UliPlot~=0.2.2
 requests~=2.31.0
 beautifulsoup4~=4.12.2
-selenium~=4.11.2
+selenium==4.13.0
 python-dotenv
-webdriver_manager
 aiohttp~=3.8.5
 lxml~=4.9.3
