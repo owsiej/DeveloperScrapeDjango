@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: django_app
+    build: .
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+  db:
+    restart: always
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_NAME}
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: chrome_driver_django
+    ports:
+      - "4444:4444"
+    hostname: chrome
+    privileged: true
+    shm_size: 2g
+    restart: always
+    environment:
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - SE_NODE_MAX_SESSIONS=20
+volumes:
+  postgres_data:
+  DeveloperScrapeDjango:

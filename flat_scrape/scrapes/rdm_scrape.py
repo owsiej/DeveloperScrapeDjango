@@ -1,6 +1,5 @@
 import re
 import time
-import os
 import asyncio
 import aiohttp
 from itertools import chain
@@ -13,7 +12,6 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 from . import standardize_flat_info as std
@@ -24,13 +22,13 @@ load_dotenv()
 
 class ChromeDriver:
     def __init__(self):
-        self.driverPath = os.environ.get("CHROME_DRIVER_PATH")
-        self.service = Service(executable_path=self.driverPath)
         self.options = Options()
-        # self.options.add_experimental_option("detach", True)
         self.options.add_argument("--headless=new")
-        # self.options.add_argument("--no-startup-window")
-        self.driver = webdriver.Chrome(service=self.service, options=self.options)
+        self.options.add_argument('--no-sandbox')
+        self.options.add_argument('--disable-dev-shm-usage')
+        self.options.add_argument("start-maximized")
+        self.options.add_argument('--window-size=1920,1080')
+        self.driver = webdriver.Remote(command_executor='http://chrome:4444/wd/hub', options=self.options)
 
     def __del__(self):
         self.driver.quit()
@@ -75,10 +73,9 @@ async def get_all_floors_in_investment(investmentData, htmlData: dict, session: 
 
 def get_flats_floor_number(url, htmlData: dict):
     flatsToFloors = {}
-
     driver = ChromeDriver.get_driver()
     driver.get(url)
-    time.sleep(0.5)
+    time.sleep(1)
     soup = BeautifulSoup(driver.page_source, "html.parser")
     data = soup.find_all(htmlData['flatTag'])
     floorNumber = eval(f"soup{htmlData['floorNumber']}")
@@ -86,7 +83,6 @@ def get_flats_floor_number(url, htmlData: dict):
         flatsToFloors.update({
             item[htmlData['flatName']]: int(floorNumber)
         })
-
     return flatsToFloors
 
 
@@ -102,11 +98,13 @@ def get_mappers():
     partialFunc = partial(get_flats_floor_number, htmlData=flatsHtmlInfoFloors)
     with ThreadPool() as pool:
         mapper = pool.map(partialFunc, urls)
+        time.sleep(1)
 
     flatFloorKeyMap = {
         key: value
         for item in mapper
         for key, value in item.items()}
+
     return investKeyMap, flatFloorKeyMap
 
 
