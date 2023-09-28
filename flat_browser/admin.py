@@ -4,7 +4,6 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib import messages
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext
 
 from . import models
 
@@ -71,18 +70,6 @@ class DeveloperAdmin(admin.ModelAdmin):
             self.message_user(request, mark_safe(
                 "Dodano następujące inwestycje dla dewelopera {dev}:<br/>".format(dev=dev.name) + invest_str_msg),
                               messages.SUCCESS)
-            # try:
-            #     objs = models.Investment.objects.bulk_create(
-            #         [
-            #             models.Investment(**invest, developer=dev)
-            #             for invest in invests
-            #         ]
-            #     )
-            #     self.message_user(request, mark_safe(
-            #         "Dodano następujące inwestycje dla dewelopera {dev}:<br/>".format(dev=dev.name) + invest_str_msg),
-            #                       messages.SUCCESS)
-            # except IntegrityError:
-            #     self.message_user(request, "Dodawana inwestycja już istnieje", messages.ERROR)
 
     @admin.action(description="Add flats to developer")
     def add_all_flats_to_dev(self, request, queryset):

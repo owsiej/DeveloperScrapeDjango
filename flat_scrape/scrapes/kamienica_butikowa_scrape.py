@@ -12,7 +12,7 @@ flatsHtmlInfo = {
     'flatTag': """.xpath("//div[(@class='v1 ps7 s141') or (@class='v1 ps15 s209')]//div[contains(@id,'popup')]")""",
     'floorNumber': ".xpath('./div/p[5]/a/@href')[0].split('_')[-1][1]",
     'roomsAmount': ".xpath('./div/p[2]/text()')[0].strip().split()[-1]",
-    'area': ".xpath('./div/p[3]/text()')[0].split()[1].replace('.m', '')",
+    'area': ".xpath('./div/p[3]/text()')[0].split()[1].replace(',', '.').replace('.m','')",
     'price': "",
     'status': ".xpath('./div/p[4]/text()')[0].split()[-1]",
     'url': ".xpath('./div/p[6]/a/@href')[0]",
