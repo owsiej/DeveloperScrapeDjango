@@ -34,7 +34,8 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOW_HOSTS").split(" ")
 # SESSION_COOKIE_SECURE = True
 # SECURE_SSL_REDIRECT = True
 # SECURE_HSTS_SECONDS = 3600
-
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:1337"]
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000
 # Application definition
 
 INSTALLED_APPS = [
@@ -130,6 +131,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
