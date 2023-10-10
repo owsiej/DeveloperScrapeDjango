@@ -8,7 +8,6 @@ from UliPlot.XLSX import auto_adjust_xlsx_column_width
 from itertools import groupby
 from datetime import datetime
 from openpyxl.styles import Alignment
-from django.core.cache import cache
 
 from .models import Developer, Investment, Flat
 from .forms import FlatForm
@@ -46,8 +45,11 @@ class FlatList(ListView):
             insertion_date=Flat.objects.latest("insertion_date").insertion_date,
             status__in=flats['status'],
             investment__in=investments).order_by("developer__name", "investment__name", "floor", "status", "area")
-        cache.set('queryset', result_query, timeout=1000)
         return result_query
+
+    def get(self, request, *args, **kwargs):
+        self.request.session['flat_filter'] = dict(request.GET)
+        return super().get(request, *args, **kwargs)
 
 
 class FlatFormView(FormView):
@@ -80,16 +82,24 @@ class FlatFormView(FormView):
 
 
 def export_excel_file(request):
-    query = cache.get('queryset')
-    query_flats = list(query.values("investment__name",
-                                    "developer__name",
-                                    "floor",
-                                    "rooms",
-                                    "area",
-                                    "price",
-                                    "status",
-                                    "url",
-                                    "insertion_date").order_by("developer__name"))
+    investments = request.session['invest']
+    flats = request.session['flat_filter']
+    query_flats = list(Flat.objects.filter(
+        Q(floor__range=(int(*flats['floor_gte']), int(*flats['floor_lte']))) | Q(floor__isnull=True),
+        Q(rooms__range=(int(*flats['rooms_gte']), int(*flats['rooms_lte']))) | Q(rooms__isnull=True),
+        Q(price__range=(float(*flats['price_gte']), float(*flats['price_lte']))) | Q(price__isnull=True),
+        Q(area__range=(float(*flats['area_gte']), float(*flats['area_lte']))) | Q(area__isnull=True),
+        status__in=flats['status'],
+        insertion_date=Flat.objects.latest("insertion_date").insertion_date,
+        investment__in=investments).values("investment__name",
+                                           "developer__name",
+                                           "floor",
+                                           "rooms",
+                                           "area",
+                                           "price",
+                                           "status",
+                                           "url",
+                                           "insertion_date").order_by("developer__name"))
     sorted_flats = [{x: list(y)}
                     for x, y in groupby(query_flats, lambda z: z['developer__name'])]
 
