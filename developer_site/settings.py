@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(".env")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,7 +37,6 @@ SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_HSTS_SECONDS = 3600
 CSRF_TRUSTED_ORIGINS = ['https://developerscrape.azurewebsites.net']
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000
 # Application definition
 
 INSTALLED_APPS = [
