@@ -17,11 +17,6 @@ echo "Starting ssh"
 set -e
 service ssh start
 
-
-echo "Starting ssh"
-set -e
-service ssh start
-
 # Start server
 echo "Starting server"
 gunicorn -c ./gunicorn_config.py

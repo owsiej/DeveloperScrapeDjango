@@ -11,6 +11,8 @@ RUN pip install -r requirements.txt
 
 RUN apt-get install bash
 
+COPY sshd_config /etc/ssh/
+
 COPY entrypoint.sh .
 RUN apt-get update \
     && apt-get install -y --no-install-recommends dialog \
@@ -20,7 +22,6 @@ RUN mkdir /run/sshd
 RUN sed -i 's/\r$//g' /usr/src/app/entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-COPY sshd_config /etc/ssh/
 
 EXPOSE 8000 2222
 
