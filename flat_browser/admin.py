@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import admin
 from django import forms
 from django.db.models.signals import post_save, post_delete
@@ -15,11 +17,15 @@ from flat_scrape.views import get_developer_info_from_scrape, get_developer_inve
 
 
 def get_devs_to_add(dev_data):
-    return [
-        (x['data']['name'], x['data']['name'])
-        for x in dev_data
-        if x['data']['name'] not in list(models.Developer.objects.values_list('name', flat=True).all())
-    ]
+    try:
+        return [
+            (x['data']['name'], x['data']['name'])
+            for x in dev_data
+            if x['data']['name'] not in list(models.Developer.objects.values_list('name', flat=True).all())
+        ]
+    except Exception as E:
+        print(E)
+        return []
 
 
 class DeveloperAdminAdd(forms.ModelForm):

@@ -2,17 +2,20 @@ version: '3.8'
 
 services:
   app:
-    container_name: django_app
+    container_name: django_app_prod
     build: .
     volumes:
-      - .:/usr/src/app/
-    ports:
-      - "8000:8000"
+      - static_volume:/usr/src/app/staticfiles
+    expose:
+      - 8000
+      - 2222
     env_file:
       - ./.env
     depends_on:
       - db
+
   db:
+    container_name: db_prod
     restart: always
     image: postgres:15
     volumes:
@@ -23,7 +26,7 @@ services:
       - POSTGRES_DB=${POSTGRES_NAME}
   chrome:
     image: selenium/standalone-chrome:latest
-    container_name: chrome_driver_django
+    container_name: chrome_driver_prod
     ports:
       - "4444:4444"
     hostname: chrome
@@ -33,6 +36,15 @@ services:
     environment:
       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
       - SE_NODE_MAX_SESSIONS=20
+  nginx:
+    container_name: nginx_prod
+    build: ./nginx
+    ports:
+      - "1337:80"
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+    depends_on:
+      - app
 volumes:
   postgres_data:
-  DeveloperScrapeDjango:
+  static_volume:

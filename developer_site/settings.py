@@ -30,12 +30,14 @@ DEBUG = os.environ.get("DEBUG")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOW_HOSTS").split(" ")
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000
 
-# APPEND_SLASH = True
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
-# SECURE_HSTS_SECONDS = 3600
-
+APPEND_SLASH = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_HSTS_SECONDS = 3600
+CSRF_TRUSTED_ORIGINS = ['https://developerscrape.azurewebsites.net']
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000
 # Application definition
 
 INSTALLED_APPS = [
@@ -90,7 +92,8 @@ DATABASES = {
         'USER': os.environ.get("POSTGRES_USER"),
         'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
         'HOST': os.environ.get("POSTGRES_HOST"),
-        'PORT': os.environ.get("POSTGRES_PORT")
+        'PORT': os.environ.get("POSTGRES_PORT"),
+        # 'OPTIONS': {'sslmode': 'require'}
         # 'OPTIONS': {
         #     "service": os.environ.get("PGSERVICENAME"),
         #     "passfile": os.environ.get("PGPASSFILE")
@@ -131,6 +134,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

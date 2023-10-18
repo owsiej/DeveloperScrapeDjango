@@ -1,5 +1,5 @@
 Django==4.2.6
-psycopg2-binary==2.9.9
+psycopg2-binary
 pandas==2.1.1
 openpyxl
 UliPlot~=0.2.2
@@ -10,3 +10,4 @@ python-dotenv
 aiohttp~=3.8.5
 lxml~=4.9.3
 django-widget-tweaks==1.5.0
+gunicorn==21.2.0

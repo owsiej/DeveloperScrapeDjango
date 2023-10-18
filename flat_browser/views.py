@@ -1,14 +1,13 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView
 from django.http import HttpResponse
-from django.db.models import Q, Max, OuterRef, F
+from django.db.models import Q
 import pandas as pd
 import io
 from UliPlot.XLSX import auto_adjust_xlsx_column_width
 from itertools import groupby
 from datetime import datetime
 from openpyxl.styles import Alignment
-from django.core.cache import cache
 
 from .models import Developer, Investment, Flat
 from .forms import FlatForm
@@ -37,13 +36,14 @@ class FlatList(ListView):
     def get_queryset(self):
         investments = self.request.session['invest']
         flats = dict(self.request.GET)
+
         result_query = Flat.objects.filter(
             Q(floor__range=(int(*flats['floor_gte']), int(*flats['floor_lte']))) | Q(floor__isnull=True),
             Q(rooms__range=(int(*flats['rooms_gte']), int(*flats['rooms_lte']))) | Q(rooms__isnull=True),
             Q(price__range=(float(*flats['price_gte']), float(*flats['price_lte']))) | Q(price__isnull=True),
             Q(area__range=(float(*flats['area_gte']), float(*flats['area_lte']))) | Q(area__isnull=True),
-            status__in=flats['status'],
             insertion_date=Flat.objects.latest("insertion_date").insertion_date,
+            status__in=flats['status'],
             investment__in=investments).order_by("developer__name", "investment__name", "floor", "status", "area")
         return result_query
 
