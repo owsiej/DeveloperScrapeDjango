@@ -10,6 +10,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+import concurrent.futures
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -67,7 +68,6 @@ async def get_all_floors_in_investment(investmentData, htmlData: dict, session: 
                                 eval(f"data[-1]{htmlData['floorLink']}")).group(),
                             "floorUrls": [eval(f"item{htmlData['floorLink']}")
                                           for item in data]}
-
     return developerInvestments
 
 
@@ -75,8 +75,9 @@ def get_flats_floor_number(url, htmlData: dict):
     flatsToFloors = {}
     driver = ChromeDriver.get_driver()
     driver.get(url)
-    time.sleep(1)
-    soup = BeautifulSoup(driver.page_source, "html.parser")
+    time.sleep(2)
+    pageContent = driver.page_source
+    soup = BeautifulSoup(pageContent, "html.parser")
     data = soup.find_all(htmlData['flatTag'])
     floorNumber = eval(f"soup{htmlData['floorNumber']}")
     for item in data:
@@ -96,9 +97,9 @@ def get_mappers():
         for item in investFloorsUls
     }
     partialFunc = partial(get_flats_floor_number, htmlData=flatsHtmlInfoFloors)
-    with ThreadPool() as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
         mapper = pool.map(partialFunc, urls)
-        time.sleep(1)
+        time.sleep(2)
 
     flatFloorKeyMap = {
         key: value
@@ -111,7 +112,7 @@ def get_mappers():
 developerName = 'RDM Inwestycje Deweloperskie'
 baseUrl = 'https://rdminwestycje.pl/'
 
-investmentHtmlInfo = {'investmentTag': ".find('ul', class_='sub-menu').find_all('li')[:3]",
+investmentHtmlInfo = {'investmentTag': ".find('ul', class_='sub-menu').find_all('li')[:4]",
                       'investmentName': ".get_text()",
                       'investmentLink': ".a['href']"}
 
@@ -140,7 +141,7 @@ def get_flats_data():
     mappers = get_mappers()
     flatToInvestName = mappers[0]
     flatToFloor = mappers[1]
-
+    flatToFloor.update({"c25": 2})
     response = requests.get("https://rdminwestycje.pl/")
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -151,7 +152,7 @@ def get_flats_data():
     flats = json.loads(match.group(1))
     formattedFlats = []
     for key, value in flats.items():
-        if re.match("^[wgm][0-9]+$", key):
+        if re.match("^[wgmc][0-9]+$", key):
             formattedFlats.append({
                 "invest_name": flatToInvestName[key[0]],
                 "floor_number": std.standardize_floor_number(flatToFloor[key]),
