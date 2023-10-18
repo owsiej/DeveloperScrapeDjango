@@ -1,4 +1,4 @@
-FROM python:3.11.4-alpine
+FROM python:3.11.4-slim-buster
 
 WORKDIR /usr/src/app
 
@@ -9,14 +9,21 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
-RUN apk --update add bash
-RUN apk add dos2unix
+RUN apt-get install bash
 
-COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+COPY entrypoint.sh .
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends dialog \
+    && apt-get install -y --no-install-recommends openssh-server \
+    && echo "root:Docker!" | chpasswd
+RUN mkdir /run/sshd
 RUN sed -i 's/\r$//g' /usr/src/app/entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh
 
+COPY sshd_config /etc/ssh/
+
+EXPOSE 8000 2222
+
 COPY . .
-RUN dos2unix /usr/src/app/entrypoint.sh
 
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

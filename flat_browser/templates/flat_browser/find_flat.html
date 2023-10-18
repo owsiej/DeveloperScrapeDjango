@@ -40,7 +40,7 @@
 <body>
 <div class="container-fluid mt-6 d-flex justify-content-center mt-5">
 
-    <form method="get" class="row">
+    <form method="get" class="row" action="{% url 'flat_browser:flat'%}">
         <div class="col mx-5">
             <h1 class="form-label text-center fs-2 mb-5">Dostępne inwestycje wybranych deweloperów</h1>
             <select id="investments"
@@ -115,6 +115,7 @@
 <script>
        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
 
 
 </script>

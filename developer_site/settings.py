@@ -28,6 +28,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOW_HOSTS").split(" ")
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000
 
 # APPEND_SLASH = True
 # CSRF_COOKIE_SECURE = True

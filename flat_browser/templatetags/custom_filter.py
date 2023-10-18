@@ -5,7 +5,8 @@ register = template.Library()
 
 @register.filter
 def get_unique(value, arg):
-    return list(map(lambda x: x[arg], list(value.values(arg).distinct(arg))))
+    lista = set(map(lambda x: x[arg], list(value.values(arg))))
+    return sorted(list(lista))
 
 
 register.filter("get_unique", get_unique)
