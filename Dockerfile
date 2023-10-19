@@ -17,7 +17,7 @@ COPY entrypoint.sh .
 RUN apt-get update \
     && apt-get install -y --no-install-recommends dialog \
     && apt-get install -y --no-install-recommends openssh-server \
-    && echo "root:Docker!" | chpasswd
+    && echo "root:Docker!" | chpasswd \
 RUN mkdir /run/sshd
 RUN sed -i 's/\r$//g' /usr/src/app/entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh

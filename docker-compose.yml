@@ -3,6 +3,7 @@ version: '3.8'
 services:
   app:
     container_name: django_app_prod
+    image: djangoscrapeprod-app:latest
     build: .
     volumes:
       - static_volume:/usr/src/app/staticfiles
