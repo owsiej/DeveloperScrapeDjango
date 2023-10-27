@@ -14,7 +14,6 @@ services:
       - ./.env
     depends_on:
       - db
-
   db:
     container_name: db_prod
     restart: always
@@ -25,18 +24,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_NAME}
-  chrome:
-    image: selenium/standalone-chrome:latest
-    container_name: chrome_driver_prod
-    ports:
-      - "4444:4444"
-    hostname: chrome
-    privileged: true
-    shm_size: 2g
-    restart: always
-    environment:
-      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
-      - SE_NODE_MAX_SESSIONS=20
   nginx:
     container_name: nginx_prod
     build: ./nginx

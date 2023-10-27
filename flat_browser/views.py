@@ -122,6 +122,7 @@ def export_excel_file(request):
                                                                f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         writer.sheets['Summary'].cell(row=1, column=1).alignment = Alignment(horizontal='center')
         for name, df in zip(dev_names, dataframes):
+            df['url'] = df['url'].apply(lambda x: f'=HYPERLINK("{x}", "OPEN FLAT IN BROWSER")')
             df.to_excel(writer, name)
             auto_adjust_xlsx_column_width(df, writer, sheet_name=name, margin=1)
     memory_file.seek(0)
