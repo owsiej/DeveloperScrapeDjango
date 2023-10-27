@@ -2,10 +2,11 @@ import re
 
 
 def standardize_status(status):
-    statusNamesSold = ['sprzedane', 'sold', 3]
+    statusNamesSold = ['sprzedane', 'sold', 3, "sprzedany"]
     statusNamesFree = ['dostępne', 'free', 'wolne', 'available', 1]
     statusNamesReserved = ['rezerwacja', 'reserved',
-                           'mieszkanie jest zarezerwowane. prosimy o kontakt z działem sprzedaży.', 2, "zarezerwowane"]
+                           'mieszkanie jest zarezerwowane. prosimy o kontakt z działem sprzedaży.', 2, "zarezerwowane",
+                           "zarezerwowany"]
 
     try:
         if status.lower() in statusNamesSold:

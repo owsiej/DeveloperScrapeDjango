@@ -1,51 +1,35 @@
 import re
-import time
 import asyncio
 import aiohttp
-from itertools import chain
-import threading
-from multiprocessing.pool import ThreadPool
-from functools import partial
 import json
 import requests
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
-import concurrent.futures
-
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from itertools import chain
 
 from . import standardize_flat_info as std
-from .scrape_functions import get_developer_info, get_developer_investments, get_html_response, collect_investment_data
+from .scrape_functions import get_developer_info, get_developer_investments, get_html_response, collect_investment_data, \
+    collect_flats_with_floors
 
-load_dotenv()
+developerName = 'RDM Inwestycje Deweloperskie'
+baseUrl = 'https://rdminwestycje.pl/'
 
+investmentHtmlInfo = {'investmentTag': ".find('ul', class_='sub-menu').find_all('li')[:4]",
+                      'investmentName': ".get_text()",
+                      'investmentLink': ".a['href']"}
 
-class ChromeDriver:
-    def __init__(self):
-        self.options = Options()
-        self.options.add_argument("--headless=new")
-        self.options.add_argument('--no-sandbox')
-        self.options.add_argument('--disable-dev-shm-usage')
-        self.options.add_argument("start-maximized")
-        self.options.add_argument('--window-size=1920,1080')
-        self.driver = webdriver.Remote(command_executor='http://chrome:4444/wd/hub', options=self.options)
-
-    def __del__(self):
-        self.driver.quit()
-
-    @classmethod
-    def get_driver(cls):
-        the_driver = getattr(threadLocal, 'driver', None)
-        if the_driver is None:
-            the_driver = cls()
-            setattr(threadLocal, 'driver', the_driver)
-        driver = the_driver.driver
-        the_driver = None
-        return driver
+investmentHtmlInfoFloors = {
+    'floorTag': ".find_all('li', id=re.compile(r'menu-item-\\d+'), string=re.compile(r'(Parter|Piętro)'))",
+    'floorLink': ".a['href']"}
 
 
-threadLocal = threading.local()
+def get_developer_data():
+    developerData = get_developer_info(developerName, baseUrl)
+    return developerData
+
+
+def get_investments_data():
+    investmentsData = get_developer_investments(baseUrl, investmentHtmlInfo)
+    return investmentsData
 
 
 async def get_all_floors_in_investment(investmentData, htmlData: dict, session: aiohttp.ClientSession, baseUrl) -> list:
@@ -61,7 +45,7 @@ async def get_all_floors_in_investment(investmentData, htmlData: dict, session: 
     """
 
     soup = await get_html_response(url=baseUrl + investmentData['url'], session=session)
-    data = eval(f"soup{htmlData['floorTag']}")
+    data = eval(f"soup[0]{htmlData['floorTag']}")
 
     developerInvestments = {"name": investmentData['name'],
                             "investKey": re.compile(r'\w(?=pietro)').search(
@@ -71,70 +55,38 @@ async def get_all_floors_in_investment(investmentData, htmlData: dict, session: 
     return developerInvestments
 
 
-def get_flats_floor_number(url, htmlData: dict):
-    flatsToFloors = {}
-    driver = ChromeDriver.get_driver()
-    driver.get(url)
-    time.sleep(2)
-    pageContent = driver.page_source
-    soup = BeautifulSoup(pageContent, "html.parser")
-    data = soup.find_all(htmlData['flatTag'])
-    floorNumber = eval(f"soup{htmlData['floorNumber']}")
-    for item in data:
-        flatsToFloors.update({
-            item[htmlData['flatName']]: int(floorNumber)
-        })
-    return flatsToFloors
+async def get_all_flats_on_floor(url, session):
+    soup = await get_html_response(url=url, session=session)
+    pattern = re.compile(r'var settings = (.*?);')
+    data = soup[0].find('script', string=pattern).text
+    match = re.search(r'var settings = (.*?);', data)
+    flats = json.loads(match.group(1))
+    floorValue = flats['general']['name'][-1]
+    try:
+        floorValue = int(floorValue)
+    except ValueError:
+        floorValue = 0
+    flatsWithFloor = dict.fromkeys([item['title'] for item in flats['spots']], floorValue)
+    return flatsWithFloor
 
 
 def get_mappers():
-    investFloorsUls = asyncio.run(
-        collect_investment_data(investmentsInfo=get_investments_data(), htmlData=investmentHtmlInfoFloors,
+    investData = get_investments_data()
+    investFloorsUrls = asyncio.run(
+        collect_investment_data(investmentsInfo=investData, htmlData=investmentHtmlInfoFloors,
                                 function=get_all_floors_in_investment))
-    urls = list(chain.from_iterable(map(lambda x: x['floorUrls'], investFloorsUls)))
     investKeyMap = {
         item['investKey']: item['name']
-        for item in investFloorsUls
+        for item in investFloorsUrls
     }
-    partialFunc = partial(get_flats_floor_number, htmlData=flatsHtmlInfoFloors)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
-        mapper = pool.map(partialFunc, urls)
-        time.sleep(2)
-
+    urls = list(chain.from_iterable([item['floorUrls']
+                                     for item in investFloorsUrls]))
+    flatFloorKeyMap = asyncio.run(collect_flats_with_floors(urls=urls, function=get_all_flats_on_floor))
     flatFloorKeyMap = {
         key: value
-        for item in mapper
+        for item in flatFloorKeyMap
         for key, value in item.items()}
-
     return investKeyMap, flatFloorKeyMap
-
-
-developerName = 'RDM Inwestycje Deweloperskie'
-baseUrl = 'https://rdminwestycje.pl/'
-
-investmentHtmlInfo = {'investmentTag': ".find('ul', class_='sub-menu').find_all('li')[:4]",
-                      'investmentName': ".get_text()",
-                      'investmentLink': ".a['href']"}
-
-investmentHtmlInfoFloors = {
-    'floorTag': ".find_all('li', id=re.compile(r'menu-item-\\d+'), string=re.compile(r'(Parter|Piętro)'))",
-    'floorLink': ".a['href']"}
-
-flatsHtmlInfoFloors = {
-    'flatTag': 'polygon',
-    'flatName': 'data-shape-title',
-    'floorNumber': ".find('span', class_='bt_bb_headline_content').text.split()[1]"
-}
-
-
-def get_developer_data():
-    developerData = get_developer_info(developerName, baseUrl)
-    return developerData
-
-
-def get_investments_data():
-    investmentsData = get_developer_investments(baseUrl, investmentHtmlInfo)
-    return investmentsData
 
 
 def get_flats_data():
@@ -142,7 +94,8 @@ def get_flats_data():
     flatToInvestName = mappers[0]
     flatToFloor = mappers[1]
     flatToFloor.update({"c25": 2})
-    response = requests.get("https://rdminwestycje.pl/")
+
+    response = requests.get(baseUrl)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     pattern = re.compile(r'var mieszkania = (.*?);')

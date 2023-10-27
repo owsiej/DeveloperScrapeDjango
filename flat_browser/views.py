@@ -1,24 +1,26 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView
 from django.http import HttpResponse
-from django.db.models import Q, Max, OuterRef, F
+from django.db.models import Q
 import pandas as pd
 import io
 from UliPlot.XLSX import auto_adjust_xlsx_column_width
 from itertools import groupby
 from datetime import datetime
 from openpyxl.styles import Alignment
-from django.core.cache import cache
 
 from .models import Developer, Investment, Flat
 from .forms import FlatForm
 
 
-# Create your views here.
-
 class DeveloperList(ListView):
     model = Developer
     context_object_name = "developer_list"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['last_update_date'] = f'Last updated: {Flat.objects.latest("insertion_date").insertion_date}'
+        return context
 
 
 class InvestmentList(ListView):

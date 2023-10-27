@@ -17,9 +17,10 @@ async def get_json_response(url, session):
 
 async def get_html_response(url, session):
     async with session.get(url) as response:
-        urlText = await response.text()
-        data = BeautifulSoup(urlText, "html.parser")
-        return data
+        url = str(response.url)
+        pageText = await response.text()
+        data = BeautifulSoup(pageText, "html.parser")
+        return [data, url]
 
 
 async def post_html_request(url, session):
@@ -58,13 +59,17 @@ def get_developer_investments(url, htmlData: dict) -> list:
         Object - Investment name, link to investment
     """
     developerInvestments = []
-    response = requests.get(url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     data = eval(f"soup{htmlData['investmentTag']}")
 
     for item in data:
-        developerInvestments.append({"name": eval(f"item{htmlData['investmentName']}"),
-                                     "url": eval(f"item{htmlData['investmentLink']}")})
+        investName = eval(f"item{htmlData['investmentName']}")
+        developerInvestments.append(
+            {"name": unicodedata.normalize('NFKD', investName) if not isinstance(investName, list) else investName,
+             "url": eval(f"item{htmlData['investmentLink']}")})
 
     return developerInvestments
 
@@ -89,13 +94,13 @@ async def get_new_page_links(investmentData: dict, htmlData: dict,
 
     soup = await get_html_response(url=investmentData['url'], session=session)
     while True:
-        nextPage = eval(f"soup{htmlData['nextPageTag']}")
+        nextPage = eval(f"soup[0]{htmlData['nextPageTag']}")
 
         if nextPage is not None:
             investmentsFinalInfo.append({'name': investmentData['name'],
                                          'url': baseUrl + eval(f"nextPage{htmlData['nextPageLink']}")})
             response = requests.get(investmentsFinalInfo[-1]['url'])
-            soup = BeautifulSoup(response.text, "html.parser")
+            soup = [BeautifulSoup(response.text, "html.parser")]
         else:
             break
 
@@ -118,13 +123,13 @@ async def get_all_buildings_from_investment(investmentData: dict, htmlData: dict
     listOfBuildings = []
 
     soup = await get_html_response(url=baseUrl + investmentData['url'], session=session)
-
-    buildings = eval(f"soup{htmlData['buildingTag']}")
+    buildings = eval(f"soup[0]{htmlData['buildingTag']}")
     if buildings:
         for building in buildings:
             listOfBuildings.append({'name': eval(f"investmentData{htmlData['buildingName']}"),
-                                    'url': eval(f"building{htmlData['buildingLink']}")})
+                                    'url': baseUrl + eval(f"building{htmlData['buildingLink']}")})
     else:
+        investmentData['url'] = soup[1]
         listOfBuildings.append(investmentData)
     return listOfBuildings
 
@@ -152,7 +157,7 @@ async def get_investment_flats(investLink: str, investName: str, htmlData: dict,
 
     soup = await get_html_response(url=baseUrl + investLink, session=session)
     try:
-        data = eval(f"soup{htmlData['flatTag']}")
+        data = eval(f"soup[0]{htmlData['flatTag']}")
     except AttributeError:
         pass
     else:
@@ -243,7 +248,7 @@ async def get_investment_flats_xpath(investLink: str, investName: str, htmlData:
     flats = []
 
     soup = await get_html_response(url=baseUrl + investLink, session=session)
-    soupX = etree.HTML(str(soup))
+    soupX = etree.HTML(str(soup[0]))
     try:
         data = eval(f"soupX{htmlData['flatTag']}")
     except AttributeError:
@@ -371,6 +376,19 @@ async def collect_investment_data(investmentsInfo, htmlData, function, baseUrl="
         for investment in investmentsInfo:
             task = asyncio.create_task(
                 function(investmentData=investment, htmlData=htmlData, session=session, baseUrl=baseUrl))
+            tasks.append(task)
+        flats = await asyncio.gather(*tasks)
+    return flats
+
+
+async def collect_flats_with_floors(urls, function):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
+    async with aiohttp.ClientSession(headers=headers) as session:
+        tasks = []
+        for url in urls:
+            task = asyncio.create_task(
+                function(url=url, session=session))
             tasks.append(task)
         flats = await asyncio.gather(*tasks)
     return flats
