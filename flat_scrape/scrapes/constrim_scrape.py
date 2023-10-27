@@ -12,7 +12,7 @@ apiUrls = [
 
 investmentHtmlInfo = {
     'investmentTag': ".find('ul', class_='sub-menu').find_all('a')",
-    'investmentName': ".get_text()",
+    'investmentName': ".get_text(strip=True)",
     'investmentLink': "['href']"}
 
 flatsHtmlInfo = {'dataLocation': "['flats']",

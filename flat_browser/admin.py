@@ -125,6 +125,7 @@ class FlatAdmin(admin.ModelAdmin):
     list_display = ['developer', 'investment', 'insertion_date']
     ordering = ['developer', 'investment']
     search_fields = ('developer__name__startswith',)
+    list_filter = ('insertion_date',)
 
 
 admin.site.register(models.Developer, DeveloperAdmin)
