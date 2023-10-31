@@ -5,7 +5,7 @@ from .scrape_functions import get_developer_info, get_developer_investments, \
     get_investment_flats_from_api_condition, collect_flats_data
 
 developerName = 'Constrim'
-baseUrl = 'https://constrim.pl/'
+baseUrl = 'https://conhouse.com.pl/'
 apiUrls = [
     'https://smart-makieta-3destate-embed.azureedge.net/assets/5b306c4f-895e-434b-9913-c70550fc4f73/app.config.json',
     'https://smart-makieta-3destate-embed.azureedge.net/assets/6a56c6d7-ba7f-4348-a4c9-951768b7ef72/app.config.json']

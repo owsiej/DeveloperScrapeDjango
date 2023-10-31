@@ -1,9 +1,13 @@
-version: '3.8'
-
+version: '3.9'
+networks:
+  scrape_network_dev:
+    external: true
+    name: scrape_network_dev
 services:
   app:
     container_name: django_app_dev
     build: .
+    image: developer_scrape_dev
     volumes:
       - .:/usr/src/app/
     ports:
@@ -12,8 +16,11 @@ services:
       - ./.env.dev
     depends_on:
       - db
+    networks:
+      - scrape_network_dev
   db:
     restart: always
+    container_name: db-1
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
@@ -21,6 +28,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_NAME}
+    networks:
+      - scrape_network_dev
 volumes:
   postgres_data:
   DeveloperScrapeDjango:
