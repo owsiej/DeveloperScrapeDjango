@@ -1,9 +1,9 @@
 version: '3.8'
-
+name: "developer_scrape_production"
 services:
   app:
     container_name: django_app_prod
-    image: djangoscrapeprod-app:latest
+    image: developer_scrape_production-app
     build: .
     volumes:
       - static_volume:/usr/src/app/staticfiles
