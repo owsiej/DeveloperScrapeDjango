@@ -29,10 +29,19 @@ def get_developer_data():
 
 def get_investments_data():
     investmentsData = get_developer_investments(baseUrl, investmentsInfoHtml)
+    for key, value in investmentsData[0].items():
+        val = list(filter(
+            lambda x: not re.search(r"(domki)|(Domki)|(Złote\s+Kaskady).*(Horodniany)\s+(ETAP\s+I[^I])|(zlotekaskady)"
+                                    , str(x)), value))
+        investmentsData[0][key] = val
     newNames = list(dict.fromkeys(
-        map(lambda x: x.get_text(strip=True).replace("Białystok", "").replace("”", " ").replace("„", "").replace(",",
-                                                                                                                 "").replace(
-            "  ", " ").strip(),
+        map(lambda x: x.get_text(strip=True)
+            .replace("Białystok", "")
+            .replace("”", " ")
+            .replace("„", "")
+            .replace(",", "")
+            .replace("  ", " ")
+            .strip(),
             investmentsData[0]['name'])))
     newUrls = list(map(lambda x: x['href'], investmentsData[0]['url']))
     formattedNames = newNames.copy()
