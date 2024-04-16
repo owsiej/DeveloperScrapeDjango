@@ -9,7 +9,7 @@ baseUrl = 'https://rutkowskidevelopment.pl/oferta/'
 apiUrls = ['https://rutkowskidevelopment.pl/wp-content/themes/hubdab_starter/api.json']
 
 investmentHtmlInfo = {
-    'investmentTag': ".find('li', id='menu-item-12').find_all('a', class_='dropdown-item')",
+    'investmentTag': ".find('li', id='menu-item-12').find('ul').find_all('a', class_='dropdown-item')",
     'investmentName': "['title']",
     'investmentLink': "['href']"}
 

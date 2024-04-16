@@ -10,7 +10,7 @@ cityTag = '#bialystok'
 investmentHtmlInfo = {
     'investmentTag': ".find_all(lambda tagy: tagy.name == 'a' and tagy.get('class') == ['box_inwestycja'] or tagy.get('class') == ['box_inwestycja', 'big2'], "
                      "attrs={'data-city': 'Bialystok'})",
-    'investmentName': ".find(class_='nazwa').get_text().encode('iso-8859-1').decode('utf-8')",
+    'investmentName': ".find(class_='nazwa').get_text()+', '+item.find(class_='adres').get_text()",
     'investmentLink': "['href']"}
 
 flatsHtmlInfo = {'flatTag': ".tbody.find_all('tr', class_='lokal_row')",
@@ -34,6 +34,8 @@ def get_investments_data():
         'name': item['name'],
         'url': baseUrl + item['url']
     }, investmentsInfo))
+    for invest in investmentsData:
+        print(invest)
     return investmentsData
 
 

@@ -5,7 +5,6 @@ import re
 import asyncio
 import aiohttp
 from lxml import etree
-
 from . import standardize_flat_info as std
 
 
@@ -64,7 +63,6 @@ def get_developer_investments(url, htmlData: dict) -> list:
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     data = eval(f"soup{htmlData['investmentTag']}")
-
     for item in data:
         investName = eval(f"item{htmlData['investmentName']}")
         developerInvestments.append(
@@ -174,7 +172,8 @@ async def get_investment_flats(investLink: str, investName: str, htmlData: dict,
                     unicodedata.normalize('NFKD', eval(f"flat{htmlData['price']}"))) if htmlData[
                     'price'] else 0,
                 'status': std.standardize_status(eval(f"flat{htmlData['status']}")),
-                'url': htmlData['baseUrl'] + eval(f"flat{htmlData['url']}")
+                'url': htmlData['baseUrl'] + eval(f"flat{htmlData['url']}") if htmlData[
+                    'url'] else investLink
             })
 
     return flats

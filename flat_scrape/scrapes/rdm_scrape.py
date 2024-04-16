@@ -13,7 +13,7 @@ from .scrape_functions import get_developer_info, get_developer_investments, get
 developerName = 'RDM Inwestycje Deweloperskie'
 baseUrl = 'https://rdminwestycje.pl/'
 
-investmentHtmlInfo = {'investmentTag': ".find('ul', class_='sub-menu').find_all('li')[:4]",
+investmentHtmlInfo = {'investmentTag': ".find('ul', class_='sub-menu').find_all('li')[:2]",
                       'investmentName': ".get_text()",
                       'investmentLink': ".a['href']"}
 
@@ -105,7 +105,7 @@ def get_flats_data():
     flats = json.loads(match.group(1))
     formattedFlats = []
     for key, value in flats.items():
-        if re.match("^[wgmc][0-9]+$", key):
+        if re.match("^[wc][0-9]+$", key):
             formattedFlats.append({
                 "invest_name": flatToInvestName[key[0]],
                 "floor_number": std.standardize_floor_number(flatToFloor[key]),

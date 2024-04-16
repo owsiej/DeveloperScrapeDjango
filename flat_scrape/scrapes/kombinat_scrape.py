@@ -7,9 +7,9 @@ from .scrape_functions import get_developer_info, get_developer_investments, \
 
 developerName = 'Kombinat Budowlany'
 baseUrl = 'https://www.kombinatbud.com.pl'
-baseTag = '/Inwestycje'
+baseTag = '/Oferta/Inwestycje'
 
-investmentsHtmlInfo = {'investmentTag': ".find_all(class_='covers')[0].find_all('a')",
+investmentsHtmlInfo = {'investmentTag': ".find(class_='covers').find_all('a')",
                        'investmentName': ".find('h3').get_text()",
                        'investmentLink': "['href']"}
 
