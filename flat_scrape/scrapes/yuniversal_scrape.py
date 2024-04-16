@@ -34,8 +34,6 @@ def get_investments_data():
         'name': item['name'],
         'url': baseUrl + item['url']
     }, investmentsInfo))
-    for invest in investmentsData:
-        print(invest)
     return investmentsData
 
 
